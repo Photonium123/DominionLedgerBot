@@ -1,0 +1,27 @@
+{
+  "name": "dominion",
+  "version": "1.0.0",
+  "description": "A discord bot for a Dominion (or any game really) win ledger",
+  "main": "main.js",
+  "dependencies": {
+    "discord.js": "^11.4.2",
+    "pg": "^7.7.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Photonium123/DominionLedgerBot.git"
+  },
+  "keywords": [
+    "discord.js"
+  ],
+  "author": "photonium123",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Photonium123/DominionLedgerBot/issues"
+  },
+  "homepage": "https://github.com/Photonium123/DominionLedgerBot#readme"
+}
