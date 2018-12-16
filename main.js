@@ -39,31 +39,7 @@ function stringsToID(stris) {
   return num;
 }
 
-client.on('ready', () => {
-  console.log("Logged in as " + client.user.tag);
-});
-
-client.on('message', msg => {
-  if(msg.content == "!help") {
-    msg.reply("Commands:\n`!help`: show this message\n`!prepdb`: update db for server\n`!win`: add a win\n`!data`: get data for a matchup\n`!alldata`: get all win data for a player (coming soon...)");   
-  }
-
-  else if(msg.content == "!prepdb") {
-    // initialize database 
-    let members = msg.guild.members.array();
-
-    let playerIDs = [];
-    for(let i = 0; i < members.length; i++) {
-      if(members[i].user.id != client.user.id) {
-        playerIDs.push(members[i].user.id);
-      }
-    }
-
-    db.query("SELECT relname FROM pg_class WHERE relname = 's" + msg.guild.id + "'", (err, res) => {
-      if(err) throw err;
-        
-      // table doesn't exist
-      if(res.rows == 0) {
+function createDB(msg) {
         let tablestr = " ( id integer primary key, date text";
         for(let i = 0; i < playerIDs.length; i++) {
           tablestr += ", u" + playerIDs[i] + " integer";
@@ -134,7 +110,37 @@ client.on('message', msg => {
 
         msg.reply("New rows added!");
       }
-  
+
+}
+
+client.on('ready', () => {
+  console.log("Logged in as " + client.user.tag);
+});
+
+client.on('message', msg => {
+  if(msg.content == "!help") {
+    msg.reply("Commands:\n`!help`: show this message\n`!prepdb`: update db for server\n`!win`: add a win\n`!data`: get data for a matchup\n`!alldata`: get all win data for a player (coming soon...)");   
+  }
+
+  else if(msg.content == "!prepdb") {
+    // initialize database 
+    let members = msg.guild.members.array();
+
+    let playerIDs = [];
+    for(let i = 0; i < members.length; i++) {
+      if(members[i].user.id != client.user.id) {
+        playerIDs.push(members[i].user.id);
+      }
+    }
+
+    db.query("SELECT relname FROM pg_class WHERE relname = 's" + msg.guild.id + "'", (err, res) => {
+      if(err) throw err;
+        
+      // table doesn't exist
+      if(res.rows == 0) {
+        createDB(msg);
+      }
+          
       // add new columns
       else {
         for(let i = 0; i < playerIDs.length; i++) {
@@ -205,6 +211,13 @@ client.on('message', msg => {
 
   else if(msg.content.length > 5 && (msg.content.substring(0,5) == "!win " || msg.content.substring(0,5) == "!pin ")) {
     // add win
+    db.query("SELECT relname FROM pg_class WHERE relname = 's" + msg.guild.id + "'", (err, res) => {
+
+    if(err) throw err;
+
+    if(res.rows == 0) {
+      createDB(msg);
+    }
 
     // extract mentioned ids
     let res = msg.content.split(' ');
@@ -271,10 +284,18 @@ client.on('message', msg => {
 
     console.log(query);
     console.log(query2);
+    });
   }
 
   else if(msg.content.length > 6 && msg.content.substring(0, 6) == "!data ") {
     // get one data
+    db.query("SELECT relname FROM pg_class WHERE relname = 's" + msg.guild.id + "'", (err, res) => {
+    
+    if(err) throw err;
+
+    if(res.rows == 0) {
+      createDB(msg);
+    }
 
     // extract mentioned ids
     let res = msg.content.split(' ');
@@ -318,6 +339,7 @@ client.on('message', msg => {
     });
 
     console.log(query);
+    });
   }
 });
 
