@@ -4,7 +4,7 @@ const fs = require('fs');
 
 let db;
 
-if(process.env.DATABSE_URL) {
+if(process.env.DATABASE_URL) {
   db = new Clinet({
     connectionString: process.env.DATABASE_URL,
     ssl: true
