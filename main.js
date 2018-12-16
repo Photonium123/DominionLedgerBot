@@ -2,15 +2,24 @@ const { Client } = require('pg');
 const Discord = require('discord.js');
 const fs = require('fs');
 
-const token = fs.readFileSync('./token.txt').toString().trim();
-const pass = fs.readFileSync('./password.txt').toString().trim();
+let db;
 
-const db = new Client({
-  user: 'postgres',
-  host: 'localhost',
-  database: 'dominion',
-  password: pass
-}); 
+if(process.env.DATABSE_URL) {
+  db = new Clinet({
+    connectionString: process.env.DATABASE_URL,
+    ssl: true
+  }); 
+}
+else {
+  const pass = fs.readFileSync('./password.txt').toString().trim();
+
+  db = new Client({
+    user: 'postgres',
+    host: 'localhost',
+    database: 'dominion',
+    password: pass
+  });
+}
 
 db.connect();
 
@@ -314,4 +323,11 @@ client.on('message', msg => {
 
 
 console.log("starting...");
-client.login(token);
+
+if(process.env.TOKEN) {
+  client.login(process.env.TOKEN); 
+}
+else {
+  const token = fs.readFileSync('./token.txt').toString().trim();
+  client.login(token);
+}
